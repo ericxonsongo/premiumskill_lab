@@ -1,0 +1,846 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); color: var(--color-text-primary); }
+.course-wrap { max-width: 680px; margin: 0 auto; padding: 1rem 0 3rem; }
+
+.hero { background: linear-gradient(135deg, #042C53 0%, #185FA5 60%, #378ADD 100%); border-radius: 14px; padding: 2rem 2rem 1.5rem; margin-bottom: 1.5rem; color: white; }
+.hero h1 { font-size: 22px; font-weight: 500; margin-bottom: 6px; }
+.hero p { font-size: 14px; opacity: 0.8; line-height: 1.6; margin-bottom: 1rem; }
+.hero-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-pill { background: rgba(255,255,255,0.15); border-radius: 20px; padding: 4px 12px; font-size: 12px; }
+
+.progress-bar-wrap { background: var(--color-background-secondary); border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; border: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 16px; }
+.prog-label { font-size: 13px; color: var(--color-text-secondary); min-width: 60px; }
+.prog-track { flex: 1; height: 6px; background: var(--color-border-tertiary); border-radius: 3px; }
+.prog-fill { height: 6px; background: #185FA5; border-radius: 3px; transition: width 0.4s; }
+.prog-count { font-size: 13px; font-weight: 500; color: #185FA5; min-width: 40px; text-align: right; }
+
+.nav-tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; background: var(--color-background-secondary); padding: 4px; border-radius: 10px; border: 0.5px solid var(--color-border-tertiary); }
+.nav-tab { flex: 1; padding: 8px 4px; border: none; background: transparent; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); border-radius: 7px; cursor: pointer; text-align: center; transition: all 0.2s; }
+.nav-tab.active { background: var(--color-background-primary); color: #185FA5; border: 0.5px solid var(--color-border-secondary); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.module-list { display: flex; flex-direction: column; gap: 10px; }
+.module-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 1rem 1.25rem; cursor: pointer; transition: border-color 0.2s; }
+.module-card:hover { border-color: var(--color-border-secondary); }
+.module-card.done { border-left: 3px solid #1D9E75; }
+.module-card.active-module { border-left: 3px solid #185FA5; }
+.mc-top { display: flex; align-items: center; gap: 10px; }
+.mc-num { width: 28px; height: 28px; border-radius: 50%; background: #E6F1FB; color: #185FA5; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+.mc-num.done { background: #E1F5EE; color: #0F6E56; }
+.mc-title { font-size: 14px; font-weight: 500; }
+.mc-badge { margin-left: auto; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+.badge-beginner { background: #E1F5EE; color: #0F6E56; }
+.badge-intermediate { background: #FAEEDA; color: #854F0B; }
+.badge-advanced { background: #FCEBEB; color: #A32D2D; }
+.mc-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 6px; line-height: 1.5; }
+
+.lesson-view { }
+.lesson-back { background: none; border: none; color: #185FA5; font-size: 13px; cursor: pointer; margin-bottom: 1rem; padding: 0; display: flex; align-items: center; gap: 4px; }
+.lesson-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+.lesson-card h2 { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+.lesson-card p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 12px; }
+.lesson-card h3 { font-size: 15px; font-weight: 500; margin: 1rem 0 6px; }
+.key-concept { background: #E6F1FB; border-left: 3px solid #185FA5; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #042C53; margin: 10px 0; line-height: 1.6; }
+.tip-box { background: #EAF3DE; border-left: 3px solid #3B6D11; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #173404; margin: 10px 0; line-height: 1.6; }
+.warn-box { background: #FAEEDA; border-left: 3px solid #854F0B; border-radius: 0 8px 8px 0; padding: 10px 12px; font-size: 13px; color: #412402; margin: 10px 0; line-height: 1.6; }
+
+.code-block { background: #2C2C2A; border-radius: 8px; padding: 1rem; margin: 10px 0; font-family: var(--font-mono); font-size: 12px; color: #D3D1C7; line-height: 1.8; overflow-x: auto; }
+.code-block .kw { color: #85B7EB; }
+.code-block .str { color: #97C459; }
+.code-block .cmt { color: #888780; }
+.code-block .fn { color: #FAC775; }
+.code-block .num { color: #F09595; }
+
+.method-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.method-chip { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+.get { background: #E1F5EE; color: #0F6E56; }
+.post { background: #E6F1FB; color: #185FA5; }
+.put { background: #FAEEDA; color: #854F0B; }
+.delete { background: #FCEBEB; color: #A32D2D; }
+.patch { background: #EEEDFE; color: #534AB7; }
+
+.quiz-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.quiz-q { font-size: 14px; font-weight: 500; margin-bottom: 12px; line-height: 1.6; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px 14px; font-size: 13px; cursor: pointer; transition: all 0.15s; text-align: left; }
+.quiz-opt:hover { border-color: #185FA5; color: #185FA5; }
+.quiz-opt.correct { background: #E1F5EE; border-color: #1D9E75; color: #0F6E56; }
+.quiz-opt.wrong { background: #FCEBEB; border-color: #A32D2D; color: #A32D2D; }
+.quiz-feedback { font-size: 13px; margin-top: 10px; padding: 8px 12px; border-radius: 8px; }
+.quiz-feedback.ok { background: #E1F5EE; color: #0F6E56; }
+.quiz-feedback.bad { background: #FCEBEB; color: #A32D2D; }
+
+.try-it { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+.try-header { background: var(--color-background-secondary); padding: 10px 14px; font-size: 13px; font-weight: 500; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 8px; }
+.try-dot { width: 8px; height: 8px; border-radius: 50%; }
+.try-body { padding: 14px; }
+.try-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.try-label { font-size: 12px; color: var(--color-text-secondary); min-width: 70px; }
+.try-input { flex: 1; padding: 7px 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: 6px; font-size: 13px; background: var(--color-background-secondary); color: var(--color-text-primary); }
+.try-select { padding: 7px 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: 6px; font-size: 13px; background: var(--color-background-secondary); color: var(--color-text-primary); }
+.try-run { background: #185FA5; color: white; border: none; border-radius: 8px; padding: 8px 20px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+.try-run:hover { opacity: 0.85; }
+.try-result { background: #2C2C2A; border-radius: 8px; padding: 12px; font-family: var(--font-mono); font-size: 12px; color: #D3D1C7; margin-top: 10px; min-height: 80px; white-space: pre-wrap; line-height: 1.7; }
+.status-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+.s200 { background: #E1F5EE; color: #0F6E56; }
+.s400 { background: #FCEBEB; color: #A32D2D; }
+.s500 { background: #FAEEDA; color: #854F0B; }
+
+.lesson-nav { display: flex; gap: 8px; margin-top: 1rem; }
+.lesson-nav button { flex: 1; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); transition: background 0.15s; }
+.lesson-nav button.primary { background: #185FA5; color: white; border-color: #185FA5; }
+.lesson-nav button:hover { background: var(--color-background-secondary); }
+.lesson-nav button.primary:hover { background: #0C447C; }
+
+.project-section { }
+.project-steps { display: flex; flex-direction: column; gap: 12px; }
+.project-step { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; overflow: hidden; }
+.ps-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; }
+.ps-num { width: 24px; height: 24px; border-radius: 50%; background: #E6F1FB; color: #185FA5; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ps-num.done { background: #E1F5EE; color: #0F6E56; }
+.ps-title { font-size: 14px; font-weight: 500; flex: 1; }
+.ps-body { padding: 0 16px 14px; display: none; font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; }
+.ps-body.open { display: block; }
+.ps-done-btn { background: #185FA5; color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; margin-top: 10px; }
+
+.cheatsheet { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cs-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 10px; padding: 12px; }
+.cs-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+.cs-item { font-size: 12px; padding: 4px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; justify-content: space-between; align-items: center; }
+.cs-item:last-child { border-bottom: none; }
+.cs-code { font-family: var(--font-mono); font-size: 11px; background: var(--color-background-secondary); padding: 2px 6px; border-radius: 4px; }
+
+.cert-card { background: linear-gradient(135deg, #042C53, #185FA5); border-radius: 14px; padding: 2rem; text-align: center; color: white; margin-top: 1rem; }
+.cert-icon { font-size: 48px; margin-bottom: 12px; }
+.cert-card h2 { font-size: 20px; font-weight: 500; margin-bottom: 6px; }
+.cert-card p { font-size: 13px; opacity: 0.8; }
+</style>
+
+<div class="course-wrap">
+<h2 class="sr-only">Full API Course — interactive lessons, live examples, and a capstone project.</h2>
+
+<div class="hero">
+  <h1>APIs: From Zero to Builder</h1>
+  <p>A complete, hands-on API course with live try-it examples, quizzes, and a real capstone project.</p>
+  <div class="hero-pills">
+    <span class="hero-pill">8 Modules</span>
+    <span class="hero-pill">Live Examples</span>
+    <span class="hero-pill">Quizzes</span>
+    <span class="hero-pill">Capstone Project</span>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <span class="prog-label">Progress</span>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <span class="prog-count" id="progCount">0 / 8</span>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="switchTab('modules')">Modules</button>
+  <button class="nav-tab" onclick="switchTab('tryit')">Live Lab</button>
+  <button class="nav-tab" onclick="switchTab('project')">Project</button>
+  <button class="nav-tab" onclick="switchTab('ref')">Reference</button>
+</div>
+
+<!-- MODULES TAB -->
+<div class="section active" id="tab-modules">
+  <div class="module-list" id="moduleList"></div>
+  <div class="lesson-view" id="lessonView" style="display:none;"></div>
+</div>
+
+<!-- LIVE LAB TAB -->
+<div class="section" id="tab-tryit">
+  <div class="try-it">
+    <div class="try-header">
+      <div class="try-dot" style="background:#5DCAA5"></div>
+      <span>REST API Simulator</span>
+    </div>
+    <div class="try-body">
+      <div class="try-row">
+        <span class="try-label">Method</span>
+        <select class="try-select" id="labMethod">
+          <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option><option>PATCH</option>
+        </select>
+        <input class="try-input" id="labUrl" value="/api/users" placeholder="/api/users" />
+      </div>
+      <div class="try-row" id="bodyRow" style="display:none;">
+        <span class="try-label">Body (JSON)</span>
+        <input class="try-input" id="labBody" placeholder='{"name":"Alice","email":"alice@test.com"}' />
+      </div>
+      <div class="try-row">
+        <span class="try-label">Auth</span>
+        <select class="try-select" id="labAuth">
+          <option value="">None</option>
+          <option value="bearer">Bearer Token</option>
+          <option value="apikey">API Key</option>
+          <option value="basic">Basic Auth</option>
+        </select>
+      </div>
+      <div class="try-row" id="authTokenRow" style="display:none;">
+        <span class="try-label">Token/Key</span>
+        <input class="try-input" id="labToken" placeholder="your-token-here" />
+      </div>
+      <button class="try-run" onclick="runLabRequest()">Send Request ↗</button>
+      <div class="try-result" id="labResult">// Response will appear here...</div>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <h3>Try These Endpoints</h3>
+    <p>Click any to auto-fill the lab above:</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+      <button class="quiz-opt" onclick="fillLab('GET','/api/users','','')">GET /api/users — fetch all users</button>
+      <button class="quiz-opt" onclick="fillLab('GET','/api/users/42','','')">GET /api/users/42 — fetch single user</button>
+      <button class="quiz-opt" onclick="fillLab('POST','/api/users',`{&quot;name&quot;:&quot;Alice&quot;,&quot;email&quot;:&quot;alice@test.com&quot;}` ,'bearer')">POST /api/users — create new user</button>
+      <button class="quiz-opt" onclick="fillLab('PUT','/api/users/42',`{&quot;name&quot;:&quot;Alice Updated&quot;}` ,'bearer')">PUT /api/users/42 — update user</button>
+      <button class="quiz-opt" onclick="fillLab('DELETE','/api/users/42','','bearer')">DELETE /api/users/42 — delete user</button>
+      <button class="quiz-opt" onclick="fillLab('GET','/api/products?category=tech&limit=5','','apikey')">GET /api/products?category=tech&limit=5 — query params</button>
+      <button class="quiz-opt" onclick="fillLab('GET','/api/secret','','')">GET /api/secret — test 401 unauthorized</button>
+      <button class="quiz-opt" onclick="fillLab('GET','/api/notfound','','')">GET /api/notfound — test 404 error</button>
+    </div>
+  </div>
+
+  <div class="lesson-card">
+    <h3>HTTP Status Code Reference</h3>
+    <div class="method-chips" style="flex-direction:column;gap:6px;">
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">200</span><span style="font-size:13px;">OK — Request succeeded</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">201</span><span style="font-size:13px;">Created — Resource created successfully</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#E1F5EE;color:#0F6E56;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">204</span><span style="font-size:13px;">No Content — Deleted, nothing to return</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">400</span><span style="font-size:13px;">Bad Request — Malformed request / invalid data</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FCEBEB;color:#A32D2D;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">401</span><span style="font-size:13px;">Unauthorized — Missing or bad credentials</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FCEBEB;color:#A32D2D;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">403</span><span style="font-size:13px;">Forbidden — Authenticated but not authorized</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FCEBEB;color:#A32D2D;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">404</span><span style="font-size:13px;">Not Found — Resource doesn't exist</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FCEBEB;color:#A32D2D;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">429</span><span style="font-size:13px;">Too Many Requests — Rate limit hit</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-family:var(--font-mono);font-size:12px;background:#FAEEDA;color:#854F0B;padding:2px 8px;border-radius:4px;min-width:36px;text-align:center;">500</span><span style="font-size:13px;">Internal Server Error — Server-side bug</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT TAB -->
+<div class="section" id="tab-project">
+  <div class="lesson-card">
+    <h2>Capstone Project: Weather Dashboard API</h2>
+    <p>Build a real weather dashboard by consuming a public REST API. You'll apply every concept from the course.</p>
+    <div class="key-concept">Goal: Fetch live weather data, handle auth, parse responses, handle errors, and display results — just like a professional app.</div>
+  </div>
+  <div class="project-steps" id="projectSteps"></div>
+  <div id="certSection" style="display:none;">
+    <div class="cert-card">
+      <div class="cert-icon">🎓</div>
+      <h2>Course Complete!</h2>
+      <p>You've finished all modules and the capstone project. You're now ready to build and consume real-world APIs.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REFERENCE TAB -->
+<div class="section" id="tab-ref">
+  <div class="lesson-card" style="margin-bottom:1rem;">
+    <h2>API Cheat Sheet</h2>
+  </div>
+  <div class="cheatsheet">
+    <div class="cs-card">
+      <div class="cs-title">HTTP Methods</div>
+      <div class="cs-item"><span>Read data</span><span class="cs-code get">GET</span></div>
+      <div class="cs-item"><span>Create</span><span class="cs-code post">POST</span></div>
+      <div class="cs-item"><span>Replace</span><span class="cs-code put">PUT</span></div>
+      <div class="cs-item"><span>Partial update</span><span class="cs-code patch">PATCH</span></div>
+      <div class="cs-item"><span>Remove</span><span class="cs-code delete">DELETE</span></div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-title">Auth Types</div>
+      <div class="cs-item"><span>API Key</span><span class="cs-code">?key=abc</span></div>
+      <div class="cs-item"><span>Bearer</span><span class="cs-code">Authorization:</span></div>
+      <div class="cs-item"><span>Basic</span><span class="cs-code">user:pass</span></div>
+      <div class="cs-item"><span>OAuth 2</span><span class="cs-code">access_token</span></div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-title">Common Headers</div>
+      <div class="cs-item"><span>Content type</span><span class="cs-code">Content-Type</span></div>
+      <div class="cs-item"><span>Auth</span><span class="cs-code">Authorization</span></div>
+      <div class="cs-item"><span>Accept</span><span class="cs-code">Accept</span></div>
+      <div class="cs-item"><span>CORS</span><span class="cs-code">Origin</span></div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-title">REST Naming</div>
+      <div class="cs-item"><span>Collection</span><span class="cs-code">/users</span></div>
+      <div class="cs-item"><span>Single item</span><span class="cs-code">/users/1</span></div>
+      <div class="cs-item"><span>Nested</span><span class="cs-code">/users/1/posts</span></div>
+      <div class="cs-item"><span>Filter</span><span class="cs-code">?status=active</span></div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-title">JS Fetch Snippet</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary);line-height:1.8;margin-top:4px;">
+        const res = await fetch(url, {<br>
+        &nbsp;&nbsp;method: 'POST',<br>
+        &nbsp;&nbsp;headers: { 'Content-Type': 'application/json',<br>
+        &nbsp;&nbsp;&nbsp;'Authorization': 'Bearer TOKEN' },<br>
+        &nbsp;&nbsp;body: JSON.stringify(data)<br>
+        });<br>
+        const json = await res.json();
+      </div>
+    </div>
+    <div class="cs-card">
+      <div class="cs-title">Python Requests</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-secondary);line-height:1.8;margin-top:4px;">
+        import requests<br>
+        r = requests.get(url,<br>
+        &nbsp;&nbsp;headers={'Authorization':<br>
+        &nbsp;&nbsp;&nbsp;'Bearer TOKEN'},<br>
+        &nbsp;&nbsp;params={'limit': 10})<br>
+        data = r.json()
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-card" style="margin-top:1rem;">
+    <h3>Popular Public APIs to Practice With</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-top:10px;">
+      <div class="cs-item"><span style="font-size:13px;">Open-Meteo</span><span style="font-size:12px;color:var(--color-text-secondary);">Weather (no key needed)</span></div>
+      <div class="cs-item"><span style="font-size:13px;">JSONPlaceholder</span><span style="font-size:12px;color:var(--color-text-secondary);">Fake REST API for testing</span></div>
+      <div class="cs-item"><span style="font-size:13px;">PokeAPI</span><span style="font-size:12px;color:var(--color-text-secondary);">Pokémon data (free)</span></div>
+      <div class="cs-item"><span style="font-size:13px;">OpenWeatherMap</span><span style="font-size:12px;color:var(--color-text-secondary);">Weather with API key</span></div>
+      <div class="cs-item"><span style="font-size:13px;">GitHub API</span><span style="font-size:12px;color:var(--color-text-secondary);">Repos, users, commits</span></div>
+      <div class="cs-item"><span style="font-size:13px;">Rick & Morty API</span><span style="font-size:12px;color:var(--color-text-secondary);">Characters (free, no key)</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const modules = [
+  {
+    id:1, title:"What is an API?", badge:"beginner", badgeClass:"badge-beginner",
+    desc:"Understand the concept, real-world analogies, and types of APIs.",
+    content: {
+      intro: "An API (Application Programming Interface) is a set of rules that allows software applications to communicate with each other. Think of it like a restaurant menu — the kitchen (server) has many dishes (data), and the menu (API) tells you what you can order (request) and how to order it.",
+      sections: [
+        { type:"concept", text:"An API defines HOW to request data and HOW the response will look. It's the contract between the client (you) and the server." },
+        { type:"heading", text:"Real-World Analogy" },
+        { type:"text", text:"When you use a weather app, it doesn't store weather data — it asks (API call) a weather service, which responds with current data. Your app just displays it." },
+        { type:"heading", text:"Types of APIs" },
+        { type:"text", text:"REST APIs — most common, uses HTTP. GraphQL — flexible queries. SOAP — older, XML-based. WebSocket — real-time, two-way communication." },
+        { type:"tip", text:"REST (Representational State Transfer) APIs are the most widely used. This course focuses on REST APIs since they power most modern web and mobile apps." },
+        { type:"heading", text:"Client and Server" },
+        { type:"code", lines:[
+          '<span class="cmt">// Client (your app) sends request</span>',
+          '<span class="kw">fetch</span>(<span class="str">"https://api.weather.com/current"</span>)',
+          '  .<span class="fn">then</span>(res => res.<span class="fn">json</span>())',
+          '  .<span class="fn">then</span>(data => console.<span class="fn">log</span>(data));',
+          '',
+          '<span class="cmt">// Server responds with JSON</span>',
+          '<span class="cmt">// { "city": "Mombasa", "temp": 29, "unit": "C" }</span>',
+        ]}
+      ],
+      quiz: { q:"What does API stand for?", options:["Application Programming Interface","Automatic Program Integration","Applied Protocol Index","Application Protocol Interface"], answer:0, explanation:"API stands for Application Programming Interface — it's the contract that defines how software components communicate." }
+    }
+  },
+  {
+    id:2, title:"HTTP & Request/Response", badge:"beginner", badgeClass:"badge-beginner",
+    desc:"Learn how HTTP works, request structure, methods, and status codes.",
+    content: {
+      intro: "HTTP (HyperText Transfer Protocol) is the foundation of data communication on the web. Every API call is an HTTP request, and you get an HTTP response back.",
+      sections: [
+        { type:"heading", text:"Anatomy of an HTTP Request" },
+        { type:"code", lines:[
+          '<span class="kw">POST</span> /api/users <span class="str">HTTP/1.1</span>',
+          '<span class="fn">Host</span>: api.example.com',
+          '<span class="fn">Content-Type</span>: application/json',
+          '<span class="fn">Authorization</span>: Bearer <span class="str">your-token</span>',
+          '',
+          '{',
+          '  <span class="str">"name"</span>: <span class="str">"Alice"</span>,',
+          '  <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>',
+          '}',
+        ]},
+        { type:"heading", text:"HTTP Methods" },
+        { type:"methods", items:["GET","POST","PUT","DELETE","PATCH"] },
+        { type:"text", text:"GET = read. POST = create. PUT = full replace. PATCH = partial update. DELETE = remove. These form the CRUD operations (Create, Read, Update, Delete)." },
+        { type:"heading", text:"HTTP Response" },
+        { type:"code", lines:[
+          '<span class="str">HTTP/1.1</span> <span class="num">201</span> Created',
+          '<span class="fn">Content-Type</span>: application/json',
+          '',
+          '{',
+          '  <span class="str">"id"</span>: <span class="num">42</span>,',
+          '  <span class="str">"name"</span>: <span class="str">"Alice"</span>,',
+          '  <span class="str">"email"</span>: <span class="str">"alice@example.com"</span>,',
+          '  <span class="str">"createdAt"</span>: <span class="str">"2024-01-15T10:30:00Z"</span>',
+          '}',
+        ]},
+        { type:"concept", text:"Status code 2xx = success. 4xx = client error (your fault). 5xx = server error (their fault)." },
+      ],
+      quiz: { q:"You want to RETRIEVE a list of products. Which HTTP method should you use?", options:["POST","PUT","GET","DELETE"], answer:2, explanation:"GET is used to retrieve/read data. It should never modify data on the server." }
+    }
+  },
+  {
+    id:3, title:"REST API Design", badge:"beginner", badgeClass:"badge-beginner",
+    desc:"URL structure, resources, endpoints, and REST conventions.",
+    content: {
+      intro: "REST is a set of architectural guidelines for designing APIs. RESTful APIs treat everything as a resource and use HTTP methods to act on those resources.",
+      sections: [
+        { type:"heading", text:"Resource-Based URLs" },
+        { type:"code", lines:[
+          '<span class="cmt">// Collection of users</span>',
+          '<span class="kw">GET</span>    /api/users',
+          '<span class="kw">POST</span>   /api/users',
+          '',
+          '<span class="cmt">// Single user (id=42)</span>',
+          '<span class="kw">GET</span>    /api/users/42',
+          '<span class="kw">PUT</span>    /api/users/42',
+          '<span class="kw">DELETE</span> /api/users/42',
+          '',
+          '<span class="cmt">// Nested resources (user posts)</span>',
+          '<span class="kw">GET</span>    /api/users/42/posts',
+        ]},
+        { type:"tip", text:"Use nouns for resources, not verbs. Say /api/users, not /api/getUsers or /api/createUser." },
+        { type:"heading", text:"Query Parameters" },
+        { type:"code", lines:[
+          '<span class="cmt">// Filter, sort, paginate</span>',
+          '<span class="kw">GET</span> /api/products<span class="str">?category=electronics&sort=price&limit=10&page=2</span>',
+          '',
+          '<span class="cmt">// Search</span>',
+          '<span class="kw">GET</span> /api/users<span class="str">?q=alice&status=active</span>',
+        ]},
+        { type:"concept", text:"Query parameters (?key=value) are used for filtering, sorting, searching, and pagination — never for identifying a resource." },
+        { type:"warn", text:"Avoid deeply nested URLs like /api/users/1/posts/5/comments/3/likes. Flatten to /api/likes?comment=3 when nesting goes more than 2 levels." },
+      ],
+      quiz: { q:"Which URL correctly follows REST conventions to delete a user with ID 7?", options:["DELETE /api/deleteUser/7","DELETE /api/users/7","POST /api/users/7/delete","GET /api/users/remove/7"], answer:1, explanation:"REST uses the HTTP method (DELETE) + resource URL (/api/users/7). The action is implicit in the method, not the URL." }
+    }
+  },
+  {
+    id:4, title:"JSON & Data Formats", badge:"beginner", badgeClass:"badge-beginner",
+    desc:"Parse and build JSON responses, understand common data shapes.",
+    content: {
+      intro: "JSON (JavaScript Object Notation) is the standard format for API data exchange. It's lightweight, human-readable, and supported by every programming language.",
+      sections: [
+        { type:"heading", text:"JSON Structure" },
+        { type:"code", lines:[
+          '{',
+          '  <span class="str">"id"</span>: <span class="num">1</span>,',
+          '  <span class="str">"name"</span>: <span class="str">"Alice"</span>,',
+          '  <span class="str">"active"</span>: <span class="kw">true</span>,',
+          '  <span class="str">"score"</span>: <span class="num">99.5</span>,',
+          '  <span class="str">"tags"</span>: [<span class="str">"admin"</span>, <span class="str">"user"</span>],',
+          '  <span class="str">"address"</span>: {',
+          '    <span class="str">"city"</span>: <span class="str">"Mombasa"</span>,',
+          '    <span class="str">"country"</span>: <span class="str">"Kenya"</span>',
+          '  },',
+          '  <span class="str">"notes"</span>: <span class="kw">null</span>',
+          '}',
+        ]},
+        { type:"tip", text:'JSON types: string (quoted), number, boolean (true/false), array ([]), object ({}), null.' },
+        { type:"heading", text:"Parsing JSON in JavaScript" },
+        { type:"code", lines:[
+          '<span class="cmt">// Parse string to object</span>',
+          '<span class="kw">const</span> obj = JSON.<span class="fn">parse</span>(<span class="str">\'{"name":"Alice"}\'</span>);',
+          'console.<span class="fn">log</span>(obj.name); <span class="cmt">// "Alice"</span>',
+          '',
+          '<span class="cmt">// Convert object to string</span>',
+          '<span class="kw">const</span> str = JSON.<span class="fn">stringify</span>({ name: <span class="str">"Alice"</span> });',
+          '<span class="cmt">// \'{"name":"Alice"}\'</span>',
+          '',
+          '<span class="cmt">// With fetch (auto-parse)</span>',
+          '<span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();',
+        ]},
+        { type:"concept", text:"Paginated APIs usually return a wrapper: { data: [...], total: 100, page: 1, limit: 10 }. Always read the API docs to understand the shape." },
+      ],
+      quiz: { q:'Which of these is valid JSON?', options:['{ name: "Alice" }','{ "name": "Alice" }','{ "name": Alice }','{ name: Alice }'], answer:1, explanation:'JSON requires ALL keys to be double-quoted strings. Values that are strings also need double quotes.' }
+    }
+  },
+  {
+    id:5, title:"Authentication & Security", badge:"intermediate", badgeClass:"badge-intermediate",
+    desc:"API keys, Bearer tokens, OAuth 2.0, and security best practices.",
+    content: {
+      intro: "Most real APIs require authentication — proving who you are before they'll share data. There are several common methods, each with different security trade-offs.",
+      sections: [
+        { type:"heading", text:"API Key (Simplest)" },
+        { type:"code", lines:[
+          '<span class="cmt">// Passed as query parameter (less secure)</span>',
+          '<span class="kw">GET</span> /api/data<span class="str">?api_key=abc123</span>',
+          '',
+          '<span class="cmt">// Passed as header (recommended)</span>',
+          '<span class="kw">GET</span> /api/data',
+          '<span class="fn">X-API-Key</span>: abc123',
+        ]},
+        { type:"heading", text:"Bearer Token (JWT)" },
+        { type:"code", lines:[
+          '<span class="cmt">// Login to get token</span>',
+          '<span class="kw">POST</span> /api/auth/login',
+          '{ <span class="str">"email"</span>: <span class="str">"user@example.com"</span>, <span class="str">"password"</span>: <span class="str">"..."</span> }',
+          '',
+          '<span class="cmt">// Use token in all subsequent requests</span>',
+          '<span class="fn">Authorization</span>: Bearer <span class="str">eyJhbGci...your.jwt.token</span>',
+        ]},
+        { type:"heading", text:"OAuth 2.0 (Most Secure)" },
+        { type:"text", text:"OAuth lets users grant your app permission to access their account without sharing their password. Used by Google, GitHub, Twitter. Flow: redirect user → they approve → get access token." },
+        { type:"warn", text:"NEVER hardcode API keys or tokens in frontend JavaScript. Store them in environment variables on your server, or use backend-for-frontend pattern." },
+        { type:"concept", text:"HTTPS is non-negotiable. Always use https:// URLs for API calls. HTTP sends data in plain text — anyone on the network can read it." },
+      ],
+      quiz: { q:"Where should you store an API key in a web application?", options:["In JavaScript frontend code","In a comment in your README","In an environment variable on your server","In the URL query string"], answer:2, explanation:"API keys in frontend JS are public — anyone can see them in browser dev tools. Always store secrets in server-side environment variables." }
+    }
+  },
+  {
+    id:6, title:"Error Handling", badge:"intermediate", badgeClass:"badge-intermediate",
+    desc:"Handle failures gracefully: timeouts, retries, rate limits, and user feedback.",
+    content: {
+      intro: "APIs fail. Networks are unreliable. Servers go down. Good code handles errors gracefully instead of crashing.",
+      sections: [
+        { type:"heading", text:"Basic Error Handling" },
+        { type:"code", lines:[
+          '<span class="kw">async function</span> <span class="fn">fetchUser</span>(id) {',
+          '  <span class="kw">try</span> {',
+          '    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/${id}`</span>);',
+          '    ',
+          '    <span class="kw">if</span> (!res.ok) {',
+          '      <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP ${res.status}: ${res.statusText}`</span>);',
+          '    }',
+          '    ',
+          '    <span class="kw">return await</span> res.<span class="fn">json</span>();',
+          '    ',
+          '  } <span class="kw">catch</span> (err) {',
+          '    <span class="kw">if</span> (err.name === <span class="str">"TypeError"</span>) {',
+          '      console.<span class="fn">error</span>(<span class="str">"Network error — no connection"</span>);',
+          '    } <span class="kw">else</span> {',
+          '      console.<span class="fn">error</span>(<span class="str">"API error:"</span>, err.message);',
+          '    }',
+          '  }',
+          '}',
+        ]},
+        { type:"heading", text:"Retry with Exponential Backoff" },
+        { type:"code", lines:[
+          '<span class="kw">async function</span> <span class="fn">fetchWithRetry</span>(url, retries = <span class="num">3</span>) {',
+          '  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < retries; i++) {',
+          '    <span class="kw">try</span> {',
+          '      <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);',
+          '      <span class="kw">if</span> (res.status === <span class="num">429</span>) { <span class="cmt">// rate limited</span>',
+          '        <span class="kw">await</span> <span class="fn">sleep</span>(<span class="num">2</span> ** i * <span class="num">1000</span>); <span class="cmt">// 1s, 2s, 4s</span>',
+          '        <span class="kw">continue</span>;',
+          '      }',
+          '      <span class="kw">return</span> res;',
+          '    } <span class="kw">catch</span> (e) { <span class="kw">if</span> (i === retries - <span class="num">1</span>) <span class="kw">throw</span> e; }',
+          '  }',
+          '}',
+        ]},
+        { type:"tip", text:'Rate limiting (429) means you\'re sending too many requests. Implement request queuing or caching, and always respect "Retry-After" headers.' },
+        { type:"concept", text:"Always show meaningful errors to users, not raw technical messages. 'Could not load data. Please try again.' is better than 'TypeError: Failed to fetch'." },
+      ],
+      quiz: { q:"What HTTP status code indicates you've hit a rate limit?", options:["401","403","404","429"], answer:3, explanation:"429 Too Many Requests means you've exceeded the API's rate limit. Implement exponential backoff — wait and retry after increasing delays." }
+    }
+  },
+  {
+    id:7, title:"Calling APIs in Code", badge:"intermediate", badgeClass:"badge-intermediate",
+    desc:"Fetch API, async/await, axios, Python requests — full examples.",
+    content: {
+      intro: "Now let's write real code. We'll cover the most common ways to call APIs in JavaScript and Python.",
+      sections: [
+        { type:"heading", text:"JavaScript — Fetch API" },
+        { type:"code", lines:[
+          '<span class="cmt">// GET request</span>',
+          '<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/users"</span>);',
+          '<span class="kw">const</span> users = <span class="kw">await</span> res.<span class="fn">json</span>();',
+          '',
+          '<span class="cmt">// POST request with JSON body</span>',
+          '<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"/api/users"</span>, {',
+          '  method: <span class="str">"POST"</span>,',
+          '  headers: {',
+          '    <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span>,',
+          '    <span class="str">"Authorization"</span>: <span class="str">`Bearer ${token}`</span>',
+          '  },',
+          '  body: <span class="fn">JSON.stringify</span>({ name: <span class="str">"Alice"</span> })',
+          '});',
+        ]},
+        { type:"heading", text:"Python — requests library" },
+        { type:"code", lines:[
+          '<span class="kw">import</span> requests',
+          '',
+          '<span class="cmt"># GET with params and auth</span>',
+          'r = requests.<span class="fn">get</span>(',
+          '  <span class="str">"https://api.example.com/users"</span>,',
+          '  headers={<span class="str">"Authorization"</span>: <span class="str">f"Bearer {token}"</span>},',
+          '  params={<span class="str">"limit"</span>: <span class="num">10</span>, <span class="str">"page"</span>: <span class="num">1</span>}',
+          ')',
+          'users = r.<span class="fn">json</span>()  <span class="cmt"># parse JSON</span>',
+          '',
+          '<span class="cmt"># POST</span>',
+          'r = requests.<span class="fn">post</span>(<span class="str">"https://api.example.com/users"</span>,',
+          '  json={<span class="str">"name"</span>: <span class="str">"Alice"</span>},  <span class="cmt"># auto-encodes</span>',
+          '  headers={<span class="str">"Authorization"</span>: <span class="str">f"Bearer {token}"</span>}',
+          ')',
+        ]},
+        { type:"tip", text:"Use axios in JavaScript for cleaner error handling (it throws on 4xx/5xx automatically). Use httpx in Python for async support." },
+      ],
+      quiz: { q:"In JavaScript, what does the second argument to fetch() configure?", options:["The response body","The request options (method, headers, body)","The base URL","The timeout duration"], answer:1, explanation:"The second argument to fetch() is an options object where you set method, headers, body, and other request configuration." }
+    }
+  },
+  {
+    id:8, title:"Advanced: Pagination & Webhooks", badge:"advanced", badgeClass:"badge-advanced",
+    desc:"Handle paginated results, polling vs webhooks, and real-time APIs.",
+    content: {
+      intro: "Production APIs have to handle large datasets and real-time events. This module covers pagination patterns and event-driven architecture with webhooks.",
+      sections: [
+        { type:"heading", text:"Offset Pagination" },
+        { type:"code", lines:[
+          '<span class="cmt">// Page 1: skip 0, take 10</span>',
+          '<span class="kw">GET</span> /api/users<span class="str">?page=1&limit=10</span>',
+          '',
+          '<span class="cmt">// Page 2: skip 10, take 10</span>',
+          '<span class="kw">GET</span> /api/users<span class="str">?page=2&limit=10</span>',
+          '',
+          '<span class="cmt">// Response with pagination metadata</span>',
+          '{ <span class="str">"data"</span>: [...], <span class="str">"total"</span>: <span class="num">243</span>, <span class="str">"page"</span>: <span class="num">1</span>,',
+          '  <span class="str">"totalPages"</span>: <span class="num">25</span>, <span class="str">"hasNext"</span>: <span class="kw">true</span> }',
+        ]},
+        { type:"heading", text:"Cursor Pagination (better for large data)" },
+        { type:"code", lines:[
+          '<span class="cmt">// First request — no cursor</span>',
+          '<span class="kw">GET</span> /api/posts<span class="str">?limit=20</span>',
+          '<span class="cmt">// Response: { data: [...], nextCursor: "abc123" }</span>',
+          '',
+          '<span class="cmt">// Next page — pass cursor</span>',
+          '<span class="kw">GET</span> /api/posts<span class="str">?limit=20&cursor=abc123</span>',
+        ]},
+        { type:"heading", text:"Polling vs Webhooks" },
+        { type:"text", text:"Polling: your app asks the API every N seconds 'any updates?' — simple but inefficient. Webhooks: the API calls YOUR endpoint when something happens — efficient, event-driven." },
+        { type:"code", lines:[
+          '<span class="cmt">// Webhook endpoint (your server receives this)</span>',
+          '<span class="kw">app</span>.<span class="fn">post</span>(<span class="str">"/webhooks/payment"</span>, (req, res) => {',
+          '  <span class="kw">const</span> { event, data } = req.body;',
+          '  <span class="kw">if</span> (event === <span class="str">"payment.completed"</span>) {',
+          '    <span class="fn">fulfillOrder</span>(data.orderId);',
+          '  }',
+          '  res.<span class="fn">status</span>(<span class="num">200</span>).<span class="fn">send</span>(<span class="str">"ok"</span>);',
+          '});',
+        ]},
+        { type:"warn", text:"Always verify webhook signatures — attackers can fake webhook calls. Most providers send an HMAC signature in headers you must validate." },
+      ],
+      quiz: { q:"You're building a payment notification system. Which approach is most efficient?", options:["Poll the API every 5 seconds","Use a webhook so the API notifies you","Refresh the page every minute","Store payments locally"], answer:1, explanation:"Webhooks are event-driven — the API pushes data to you only when something happens. Polling wastes resources by constantly checking even when nothing changed." }
+    }
+  }
+];
+
+const projectSteps = [
+  { title:"Get a free API key from Open-Meteo", desc:"Open-Meteo is a free weather API — no key required! Visit open-meteo.com. The API endpoint is: https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true", code:null },
+  { title:"Plan your API calls", desc:"Your app will call: 1) GET /forecast with latitude & longitude to get current temperature, wind speed, and weather code. 2) You'll parse the JSON response and display it. Map out the data shape before coding." },
+  { title:"Write the fetch function", desc:'Create a fetchWeather(city) function using async/await. Handle errors with try/catch. For coordinates, use lat=−4.05&lon=39.67 for Mombasa. Test with: fetch("https://api.open-meteo.com/v1/forecast?latitude=-4.05&longitude=39.67&current_weather=true")' },
+  { title:"Parse and display the response", desc:'The response shape is: { current_weather: { temperature, windspeed, weathercode } }. Map weather codes to descriptions: 0=Clear sky, 1-3=Partly cloudy, 45=Fog, 51=Drizzle, 61=Rain, 71=Snow, 80=Showers, 95=Thunderstorm.' },
+  { title:"Add error handling and loading states", desc:"Show a spinner while fetching. Handle 'network error' (no internet), invalid coordinates, and API timeouts gracefully. Always show a user-friendly message, never raw errors." },
+  { title:"Deploy and share", desc:"Host your finished app on GitHub Pages, Netlify (drag & drop), or Vercel. Your project is now a live web app consuming a real REST API!" },
+];
+
+let completedModules = new Set();
+let completedProjectSteps = new Set();
+let currentLesson = null;
+
+function switchTab(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function updateProgress() {
+  const pct = Math.round((completedModules.size / modules.length) * 100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progCount').textContent = completedModules.size + ' / ' + modules.length;
+}
+
+function renderModuleList() {
+  const list = document.getElementById('moduleList');
+  list.innerHTML = modules.map(m => `
+    <div class="module-card ${completedModules.has(m.id) ? 'done' : ''} ${currentLesson === m.id ? 'active-module' : ''}" onclick="openLesson(${m.id})">
+      <div class="mc-top">
+        <div class="mc-num ${completedModules.has(m.id) ? 'done' : ''}">${completedModules.has(m.id) ? '✓' : m.id}</div>
+        <span class="mc-title">${m.title}</span>
+        <span class="mc-badge ${m.badgeClass}">${m.badge}</span>
+      </div>
+      <div class="mc-desc">${m.desc}</div>
+    </div>
+  `).join('');
+}
+
+function openLesson(id) {
+  const m = modules.find(x => x.id === id);
+  currentLesson = id;
+  document.getElementById('moduleList').style.display = 'none';
+  const lv = document.getElementById('lessonView');
+  lv.style.display = 'block';
+
+  const sections = m.content.sections.map(s => {
+    if (s.type === 'heading') return `<h3>${s.text}</h3>`;
+    if (s.type === 'text') return `<p>${s.text}</p>`;
+    if (s.type === 'concept') return `<div class="key-concept">${s.text}</div>`;
+    if (s.type === 'tip') return `<div class="tip-box">💡 ${s.text}</div>`;
+    if (s.type === 'warn') return `<div class="warn-box">⚠️ ${s.text}</div>`;
+    if (s.type === 'methods') return `<div class="method-chips">${s.items.map(m => `<span class="method-chip ${m.toLowerCase()}">${m}</span>`).join('')}</div>`;
+    if (s.type === 'code') return `<div class="code-block">${s.lines.join('<br>')}</div>`;
+    return '';
+  }).join('');
+
+  const q = m.content.quiz;
+  const opts = q.options.map((o,i) => `<button class="quiz-opt" id="qopt_${m.id}_${i}" onclick="answerQuiz(${m.id},${i},${q.answer},'${q.explanation}')">${o}</button>`).join('');
+
+  const prevId = id > 1 ? id - 1 : null;
+  const nextId = id < modules.length ? id + 1 : null;
+
+  lv.innerHTML = `
+    <button class="lesson-back" onclick="backToList()">← Back to modules</button>
+    <div class="lesson-card">
+      <h2>${m.title}</h2>
+      <span class="mc-badge ${m.badgeClass}" style="display:inline-block;margin-bottom:12px;">${m.badge}</span>
+      <p>${m.content.intro}</p>
+      ${sections}
+    </div>
+    <div class="quiz-card">
+      <div class="quiz-q">🧠 Quick Check: ${q.q}</div>
+      <div class="quiz-options" id="quizOpts_${m.id}">${opts}</div>
+      <div id="quizFeedback_${m.id}" style="display:none;"></div>
+    </div>
+    <div class="lesson-nav">
+      ${prevId ? `<button onclick="openLesson(${prevId})">← Module ${prevId}</button>` : '<span></span>'}
+      <button class="primary" onclick="markDone(${m.id})">Mark Complete ✓</button>
+      ${nextId ? `<button onclick="openLesson(${nextId})">Module ${nextId} →</button>` : '<span></span>'}
+    </div>
+  `;
+}
+
+function answerQuiz(moduleId, chosen, correct, explanation) {
+  const opts = document.querySelectorAll(`[id^="qopt_${moduleId}_"]`);
+  opts.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+  const fb = document.getElementById(`quizFeedback_${moduleId}`);
+  fb.style.display = 'block';
+  fb.className = 'quiz-feedback ' + (chosen === correct ? 'ok' : 'bad');
+  fb.textContent = (chosen === correct ? '✓ Correct! ' : '✗ Not quite. ') + explanation;
+}
+
+function markDone(id) {
+  completedModules.add(id);
+  updateProgress();
+  backToList();
+}
+
+function backToList() {
+  currentLesson = null;
+  document.getElementById('moduleList').style.display = 'flex';
+  document.getElementById('lessonView').style.display = 'none';
+  renderModuleList();
+}
+
+function renderProject() {
+  document.getElementById('projectSteps').innerHTML = projectSteps.map((s, i) => {
+    const done = completedProjectSteps.has(i);
+    return `
+      <div class="project-step">
+        <div class="ps-header" onclick="toggleStep(${i})">
+          <div class="ps-num ${done ? 'done' : ''}">${done ? '✓' : i+1}</div>
+          <span class="ps-title">${s.title}</span>
+          <span style="color:var(--color-text-secondary);font-size:12px;">${done ? 'Done' : 'Expand'}</span>
+        </div>
+        <div class="ps-body ${done ? 'open' : ''}" id="psbody_${i}">
+          <p>${s.desc}</p>
+          ${!done ? `<button class="ps-done-btn" onclick="stepDone(${i})">Mark as done ✓</button>` : '<p style="color:#0F6E56;font-size:12px;margin-top:6px;">✓ Completed</p>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+  if (completedProjectSteps.size === projectSteps.length) {
+    document.getElementById('certSection').style.display = 'block';
+  }
+}
+
+function toggleStep(i) {
+  const body = document.getElementById('psbody_' + i);
+  body.classList.toggle('open');
+}
+
+function stepDone(i) {
+  completedProjectSteps.add(i);
+  renderProject();
+}
+
+// Live Lab
+document.getElementById('labMethod').addEventListener('change', function() {
+  const needsBody = ['POST','PUT','PATCH'].includes(this.value);
+  document.getElementById('bodyRow').style.display = needsBody ? 'flex' : 'none';
+});
+
+document.getElementById('labAuth').addEventListener('change', function() {
+  document.getElementById('authTokenRow').style.display = this.value ? 'flex' : 'none';
+});
+
+function fillLab(method, url, body, auth) {
+  document.getElementById('labMethod').value = method;
+  document.getElementById('labUrl').value = url;
+  document.getElementById('labBody').value = body;
+  document.getElementById('labAuth').value = auth;
+  const needsBody = ['POST','PUT','PATCH'].includes(method);
+  document.getElementById('bodyRow').style.display = needsBody ? 'flex' : 'none';
+  document.getElementById('authTokenRow').style.display = auth ? 'flex' : 'none';
+  switchTab('tryit');
+  document.querySelectorAll('.nav-tab').forEach((t,i) => { if(i===1) t.classList.add('active'); else t.classList.remove('active'); });
+}
+
+function runLabRequest() {
+  const method = document.getElementById('labMethod').value;
+  const url = document.getElementById('labUrl').value;
+  const body = document.getElementById('labBody').value;
+  const auth = document.getElementById('labAuth').value;
+  const token = document.getElementById('labToken').value;
+  const out = document.getElementById('labResult');
+  out.textContent = '⏳ Sending request...';
+
+  setTimeout(() => {
+    const result = simulateAPI(method, url, body, auth, token);
+    out.innerHTML = result;
+  }, 600 + Math.random() * 400);
+}
+
+function simulateAPI(method, url, body, auth, token) {
+  const needsAuth = ['/api/secret','/api/users/42'].some(p => url.includes(p)) && method !== 'GET';
+  const isSecret = url.includes('/api/secret');
+  const isNotFound = url.includes('/api/notfound');
+  const isDelete = method === 'DELETE';
+
+  if (isNotFound) {
+    return `<span style="color:#E24B4A">HTTP/1.1 404 Not Found</span>\nContent-Type: application/json\n\n{\n  "error": "Not Found",\n  "message": "The requested resource /api/notfound does not exist.",\n  "status": 404\n}`;
+  }
+  if (isSecret && !auth) {
+    return `<span style="color:#E24B4A">HTTP/1.1 401 Unauthorized</span>\nContent-Type: application/json\n\n{\n  "error": "Unauthorized",\n  "message": "Missing Authorization header. Provide a Bearer token.",\n  "status": 401\n}`;
+  }
+  if (isDelete) {
+    return `<span style="color:#5DCAA5">HTTP/1.1 204 No Content</span>\n\n(No response body — resource deleted successfully)`;
+  }
+
+  if (method === 'GET' && url.includes('/users/42')) {
+    return `<span style="color:#5DCAA5">HTTP/1.1 200 OK</span>\nContent-Type: application/json\n\n{\n  "id": 42,\n  "name": "Alice Wanjiku",\n  "email": "alice@example.com",\n  "role": "admin",\n  "createdAt": "2024-03-15T08:00:00Z",\n  "active": true\n}`;
+  }
+  if (method === 'GET' && url.includes('/users')) {
+    return `<span style="color:#5DCAA5">HTTP/1.1 200 OK</span>\nContent-Type: application/json\n\n{\n  "data": [\n    { "id": 1, "name": "Alice Wanjiku", "active": true },\n    { "id": 2, "name": "Brian Oduya", "active": true },\n    { "id": 3, "name": "Clara Mwangi", "active": false }\n  ],\n  "total": 3,\n  "page": 1,\n  "totalPages": 1\n}`;
+  }
+  if (method === 'POST' && url.includes('/users')) {
+    let parsed = {};
+    try { parsed = JSON.parse(body); } catch(e) {}
+    return `<span style="color:#5DCAA5">HTTP/1.1 201 Created</span>\nContent-Type: application/json\nLocation: /api/users/43\n\n{\n  "id": 43,\n  "name": "${parsed.name || 'New User'}",\n  "email": "${parsed.email || 'user@example.com'}",\n  "createdAt": "${new Date().toISOString()}",\n  "active": true\n}`;
+  }
+  if (method === 'GET' && url.includes('/products')) {
+    return `<span style="color:#5DCAA5">HTTP/1.1 200 OK</span>\nContent-Type: application/json\n\n{\n  "data": [\n    { "id": 1, "name": "Laptop Pro", "category": "tech", "price": 1299 },\n    { "id": 2, "name": "Wireless Keyboard", "category": "tech", "price": 89 },\n    { "id": 3, "name": "USB-C Hub", "category": "tech", "price": 49 }\n  ],\n  "total": 3,\n  "filters": { "category": "tech" }\n}`;
+  }
+  if (method === 'GET' && isSecret && auth) {
+    return `<span style="color:#5DCAA5">HTTP/1.1 200 OK</span>\nContent-Type: application/json\n\n{\n  "secret": "The treasure is buried at 4.0435°S, 39.6682°E",\n  "clearance": "top-secret",\n  "expires": "${new Date(Date.now()+3600000).toISOString()}"\n}`;
+  }
+  return `<span style="color:#5DCAA5">HTTP/1.1 200 OK</span>\nContent-Type: application/json\n\n{\n  "method": "${method}",\n  "url": "${url}",\n  "auth": "${auth || 'none'}",\n  "message": "Request received successfully",\n  "timestamp": "${new Date().toISOString()}"\n}`;
+}
+
+renderModuleList();
+renderProject();
+updateProgress();
+</script>
